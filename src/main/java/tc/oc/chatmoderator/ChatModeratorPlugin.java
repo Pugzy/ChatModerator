@@ -1,6 +1,5 @@
 package tc.oc.chatmoderator;
 
-import com.github.rmsy.channels.ChannelsPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -8,20 +7,21 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import tc.oc.chatmoderator.channels.SimpleFilteredChannel;
-import tc.oc.chatmoderator.factories.core.LeetSpeakFilterFactory;
+import tc.oc.chatmoderator.channels.FilteredMessageDispatcher;
 import tc.oc.chatmoderator.factories.core.TemplateFactory;
 import tc.oc.chatmoderator.factories.core.WeightedFilterFactory;
 import tc.oc.chatmoderator.factories.core.ZoneFactory;
-import tc.oc.chatmoderator.filters.core.*;
+import tc.oc.chatmoderator.filters.core.AllCapsFilter;
+import tc.oc.chatmoderator.filters.core.BubbleFilter;
+import tc.oc.chatmoderator.filters.core.DuplicateMessageFilter;
+import tc.oc.chatmoderator.filters.core.IPFilter;
+import tc.oc.chatmoderator.filters.core.ProfanityFilter;
+import tc.oc.chatmoderator.filters.core.RepeatedCharactersFilter;
 import tc.oc.chatmoderator.listeners.ChatModeratorListener;
 import tc.oc.chatmoderator.listeners.DebugListener;
-import tc.oc.chatmoderator.settings.Settings;
 import tc.oc.chatmoderator.scores.ScoreUpdateListener;
+
 import tc.oc.chatmoderator.util.ChatModeratorUtil;
 import tc.oc.chatmoderator.util.FixStyleApplicant;
 import tc.oc.chatmoderator.warnings.ViolationPreWarningListener;
@@ -45,9 +45,9 @@ public class ChatModeratorPlugin extends JavaPlugin {
     public static float PARTIALLY_OFFENSIVE_RATIO;
 
     /**
-     * Gets whether or not debug mode is enabled.
+     * Gets Whether debug mode is enabled.
      *
-     * @return Whether or not debug mode is enabled.
+     * @return Whether debug mode is enabled.
      */
     public boolean isDebugEnabled() {
         return debugEnabled;
@@ -85,7 +85,10 @@ public class ChatModeratorPlugin extends JavaPlugin {
         }
         
         // Register settings
-        Settings.register();
+        // Settings.register();
+
+        MINIMUM_SCORE_NO_SEND = getConfig().getInt("channels.minimum-score-no-send", 30);
+        PARTIALLY_OFFENSIVE_RATIO = (float) getConfig().getDouble("channels.partially-offensive", 0.65d);
 
         // Initialize the listener, add filters as necessary
         ChatModeratorListener moderatorListener = new ChatModeratorListener(this);
@@ -100,20 +103,6 @@ public class ChatModeratorPlugin extends JavaPlugin {
         for (Listener listener : this.listeners) {
             Bukkit.getPluginManager().registerEvents(listener, this);
         }
-
-        MINIMUM_SCORE_NO_SEND = getConfig().getInt("channels.minimum-score-no-send", 30);
-        PARTIALLY_OFFENSIVE_RATIO = (float) getConfig().getDouble("channels.partially-offensive", 0.65d);
-
-        ChannelsPlugin channelsPlugin = ChannelsPlugin.get();
-        channelsPlugin.setDefaultChannel(
-            new SimpleFilteredChannel(
-                getConfig().getString("channels.global.format"),
-                new Permission("channels.global", PermissionDefault.TRUE),
-                MINIMUM_SCORE_NO_SEND,
-                PARTIALLY_OFFENSIVE_RATIO
-            )
-        );
-        channelsPlugin.setGlobalChannel(channelsPlugin.getDefaultChannel());
     }
 
     @Override

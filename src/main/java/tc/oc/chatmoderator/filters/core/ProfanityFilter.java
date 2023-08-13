@@ -93,7 +93,7 @@ public class ProfanityFilter extends WeightedWordsFilter {
                 }
 
                 if (profanities.size() > 0) {
-                    Violation violation = new ProfanityViolation(message.getTimeSent(), player, message, ImmutableSet.copyOf(profanities), type, FixStyleApplicant.FixStyle.MAGIC, event);
+                    Violation violation = new ProfanityViolation(message.getTimeSent(), player, message, ImmutableSet.copyOf(profanities), type, FixStyleApplicant.FixStyle.STAR, event);
                     violation.setLevel(super.getWeightFor(pattern));
                     violationManager.addViolation(violation);
                 }

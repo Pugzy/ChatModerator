@@ -23,7 +23,7 @@ public class WordSetFactory {
     private WordSet wordSet = new WordSet();
 
     /**
-     * Whether or not to use the fixed message, or the original message sent in chat.
+     * Whether to use the fixed message, or the original message sent in chat.
      */
     private boolean useFixed;
 
@@ -59,7 +59,7 @@ public class WordSetFactory {
      * Creates a {@link tc.oc.chatmoderator.words.factories.WordSetFactory} with no defaults.
      *
      * @param message The {@link tc.oc.chatmoderator.messages.FixedMessage} to base the {@link tc.oc.chatmoderator.words.WordSet} off of.
-     * @param useFixed Whether or not to use the fixed message from the message.
+     * @param useFixed Whether to use the fixed message from the message.
      */
     public WordSetFactory(final FixedMessage message, boolean useFixed) {
         this.message = Preconditions.checkNotNull(message);

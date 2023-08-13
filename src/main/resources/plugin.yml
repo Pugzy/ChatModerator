@@ -5,7 +5,7 @@ author: Overcast Network
 website: ${project.url}
 main: ${plugin.mainClass}
 prefix: ${plugin.prefix}
-depend: [BukkitSettings, Channels]
+depend: [PGM]
 
 commands:
     chatmoderator:

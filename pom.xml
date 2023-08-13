@@ -31,58 +31,39 @@
     </properties>
 
     <repositories>
-        <repository>
-            <id>pa-snapshots</id>
-            <url>https://repo.extension.ws/content/repositories/snapshots</url>
+        <repository> <!-- Working repo for PGM and Sportpaper -->
+            <id>pgm.fyi</id>
+            <url>https://repo.pgm.fyi/snapshots</url>
         </repository>
         <repository>
-            <id>pa-releases</id>
-            <url>https://repo.extension.ws/content/repositories/releases</url>
+            <id>ashcon-repo</id>
+            <url>https://repo.ashcon.app/content/repositories/snapshots</url>
         </repository>
     </repositories>
 
-    <distributionManagement>
-        <repository>
-            <id>pa-deployment</id>
-            <url>https://repo.extension.ws/content/repositories/releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>pa-deployment</id>
-            <url>https://repo.extension.ws/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
-
     <dependencies>
+        <dependency>
+            <groupId>app.ashcon</groupId>
+            <artifactId>sportpaper-api</artifactId>
+            <version>1.8.8-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>tc.oc.pgm</groupId>
+            <artifactId>core</artifactId>
+            <version>0.15-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>annotations</artifactId>
-            <version>3.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>tc.oc</groupId>
-            <artifactId>sportbukkit-api</artifactId>
-            <version>1.11.1-R0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>2.2</version>
+            <version>3.0.1</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.8.1</version>
+            <version>4.13.2</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.rmsy.Channels</groupId>
-            <artifactId>Channels</artifactId>
-            <version>1.9-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>me.anxuiz</groupId>
-            <artifactId>bukkit-settings</artifactId>
-            <version>1.9-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
@@ -93,8 +74,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>8</source>
+                    <target>8</target>
                 </configuration>
             </plugin>
 

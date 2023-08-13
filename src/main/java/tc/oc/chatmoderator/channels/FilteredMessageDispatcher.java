@@ -1,33 +1,28 @@
 package tc.oc.chatmoderator.channels;
 
-import java.text.MessageFormat;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import javax.annotation.Nullable;
-
-import me.anxuiz.settings.bukkit.PlayerSettings;
+import com.google.common.base.Preconditions;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
 import org.bukkit.event.Event;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.permissions.Permission;
 import tc.oc.chatmoderator.ChatModeratorPlugin;
-
-import com.github.rmsy.channels.event.ChannelMessageEvent;
-import com.github.rmsy.channels.impl.SimpleChannel;
-import com.google.common.base.Preconditions;
 import tc.oc.chatmoderator.PlayerViolationManager;
-import tc.oc.chatmoderator.settings.FilterOptions;
-import tc.oc.chatmoderator.settings.Settings;
 import tc.oc.chatmoderator.violations.Violation;
 import tc.oc.chatmoderator.violations.core.AllCapsViolation;
 import tc.oc.chatmoderator.violations.core.ProfanityViolation;
 import tc.oc.chatmoderator.violations.core.ServerIPViolation;
+import tc.oc.pgm.util.event.ChannelMessageEvent;
 
-public class SimpleFilteredChannel extends SimpleChannel {
+import javax.annotation.Nullable;
+import java.text.MessageFormat;
+
+import static tc.oc.chatmoderator.settings.FilterOptions.*;
+
+public class FilteredMessageDispatcher {
 
     /**
      * Unicode Character 'HEAVY MULTIPLICATION VIOLATION'
@@ -35,17 +30,19 @@ public class SimpleFilteredChannel extends SimpleChannel {
      */
     public static char WARNING_SYMBOL = '\u2716';
 
+    protected final String format;
+    protected final Permission permission;
     protected final double scoreThreshold;
     protected float partial;
     protected final @Nullable ChatModeratorPlugin chatModerator;
 
-    public SimpleFilteredChannel(String format, final Permission permission) {
+    public FilteredMessageDispatcher(String format, final Permission permission) {
         this(format, permission, ChatModeratorPlugin.MINIMUM_SCORE_NO_SEND, ChatModeratorPlugin.PARTIALLY_OFFENSIVE_RATIO);
     }
 
-    public SimpleFilteredChannel(String format, Permission permission, double scoreThreshold, float partial) {
-        super(format, permission);
-
+    public FilteredMessageDispatcher(String format, Permission permission, double scoreThreshold, float partial) {
+        this.format = format;
+        this.permission = permission;
         Preconditions.checkArgument(scoreThreshold > 0, "Score threshold must be greater than 0!");
         this.scoreThreshold = scoreThreshold;
         this.partial = partial;
@@ -53,19 +50,11 @@ public class SimpleFilteredChannel extends SimpleChannel {
         this.chatModerator = (ChatModeratorPlugin) Bukkit.getPluginManager().getPlugin("ChatModerator");
     }
 
-    /**
-     * Sends a new message to the channel.
-     *
-     * @param rawMessage The message to be sent.
-     * @param sender     The message sender, or null for console.
-     * @return Whether or not the message was sent.
-     */
-    @Override
-    public boolean sendMessage(String rawMessage, @Nullable Player sender) {
-        String sanitizedMessage = ChatColor.stripColor(Preconditions.checkNotNull(rawMessage, "Message"));
+    public void onPlayerChat(AsyncPlayerChatEvent event) {
+        String rawMessage = event.getMessage();
+        Player sender = event.getPlayer();
 
-        ChannelMessageEvent event = new ChannelMessageEvent(rawMessage, sender, this);
-        Bukkit.getPluginManager().callEvent(event);
+        String sanitizedMessage = ChatColor.stripColor(Preconditions.checkNotNull(rawMessage, "Message"));
 
         PlayerViolationManager violationManager = null;
 
@@ -94,26 +83,26 @@ public class SimpleFilteredChannel extends SimpleChannel {
         // send it to the console regardless
         this.sendMessageToViewer(sender, Bukkit.getConsoleSender(), sanitizedMessage, event, offensive, violationsAttached, violationManager, false);
 
-        if (!event.isCancelled()) {
-            for (Player viewer : Bukkit.getOnlinePlayers()) {
-                if (viewer.hasPermission(this.getListeningPermission())) {
-                    this.sendMessageToViewer(sender, viewer, sanitizedMessage, event, offensive, violationsAttached, violationManager, forceNoSend);
-                }
-            }
-            return true;
-        } else {
-            return false;
-        }
+//        if (!event.isCancelled()) {
+//            for (Player viewer : Bukkit.getOnlinePlayers()) {
+//                if (viewer.hasPermission(this.getListeningPermission())) {
+//                    this.sendMessageToViewer(sender, viewer, sanitizedMessage, event, offensive, violationsAttached, violationManager, forceNoSend);
+//                }
+//            }
+//            return true;
+//        } else {
+//            return false;
+//        }
     }
 
-    public void sendMessageToViewer(Player sender, CommandSender viewer, String sanitizedMessage, ChannelMessageEvent event, boolean offensive, int violationsAttached, PlayerViolationManager violationManager, boolean forceNoSend) {
+    public void sendMessageToViewer(Player sender, CommandSender viewer, String sanitizedMessage, AsyncPlayerChatEvent event, boolean offensive, int violationsAttached, PlayerViolationManager violationManager, boolean forceNoSend) {
         boolean senderPresent = sender != null;
 
         String senderName = senderPresent ? sender.getName(viewer) : "Console";
         String senderDisplayName = senderPresent ? sender.getDisplayName(viewer) : ChatColor.GOLD + "*" + ChatColor.AQUA + "Console";
 
         String message = MessageFormat.format(
-                this.getFormat(),
+                this.format,
                 senderName,
                 senderDisplayName,
                 event.getMessage(),
@@ -123,7 +112,7 @@ public class SimpleFilteredChannel extends SimpleChannel {
         boolean allowSend = true;
 
         if (viewer instanceof Player) {
-            switch (PlayerSettings.getManager((Player) viewer).getValue(Settings.FILTER_SETTING, FilterOptions.class)) {
+            switch (OFFENSIVE) { // PlayerSettings.getManager((Player) viewer).getValue(Settings.FILTER_SETTING, FilterOptions.class)
                 case NONE:
                     allowSend = true;
                     break;
@@ -136,7 +125,7 @@ public class SimpleFilteredChannel extends SimpleChannel {
             }
         }
 
-        boolean isSender = viewer.equals(event.getSender());
+        boolean isSender = viewer.equals(event.getPlayer());
 
         StringBuilder builder = new StringBuilder();
 
@@ -153,7 +142,7 @@ public class SimpleFilteredChannel extends SimpleChannel {
             builder.append(this.underlineViolations(violationManager, message, event));
             viewer.sendMessage(builder.toString());
         } else if (allowSend && !forceNoSend) {
-            this.sendMessageToViewer(sender, viewer, sanitizedMessage, event);
+            // this.sendMessageToViewer(sender, viewer, sanitizedMessage, event);
         }
     }
 

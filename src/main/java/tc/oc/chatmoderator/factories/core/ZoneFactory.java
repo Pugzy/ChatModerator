@@ -35,7 +35,7 @@ public class ZoneFactory implements ChatModeratorFactory {
     private ArrayList<Class<? extends Filter>> excludedFilters;
 
     /**
-     * Whether or not that this zone is enabled.
+     * Whether that this zone is enabled.
      */
     private boolean enabled;
 

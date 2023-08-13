@@ -3,8 +3,9 @@ package tc.oc.chatmoderator.violations.core;
 import com.google.common.base.Preconditions;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.joda.time.Duration;
-import org.joda.time.Instant;
+
+import java.time.Duration;
+import java.time.Instant;
 import tc.oc.chatmoderator.messages.FixedMessage;
 import tc.oc.chatmoderator.util.FixStyleApplicant;
 import tc.oc.chatmoderator.violations.Violation;

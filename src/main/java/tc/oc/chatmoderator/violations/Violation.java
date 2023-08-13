@@ -3,7 +3,7 @@ package tc.oc.chatmoderator.violations;
 import com.google.common.base.Preconditions;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.joda.time.Instant;
+import java.time.Instant;
 import tc.oc.chatmoderator.messages.FixedMessage;
 import tc.oc.chatmoderator.util.FixStyleApplicant;
 import tc.oc.chatmoderator.zones.ZoneType;
@@ -70,18 +70,18 @@ public abstract class Violation {
     }
 
     /**
-     * Whether or not the violating chat message has been cancelled.
+     * Whether the violating chat message has been cancelled.
      *
-     * @return Whether or not the violating chat message has been cancelled.
+     * @return Whether the violating chat message has been cancelled.
      */
     public final boolean isCancelled() {
         return this.cancelled;
     }
 
     /**
-     * Sets whether or not the violating chat message should be cancelled.
+     * Sets Whether the violating chat message should be cancelled.
      *
-     * @param cancelled Whether or not the violating chat message should be cancelled.
+     * @param cancelled Whether the violating chat message should be cancelled.
      */
     public final void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
@@ -111,18 +111,18 @@ public abstract class Violation {
     }
 
     /**
-     * Gets whether or not the violating chat message has been fixed.
+     * Gets Whether the violating chat message has been fixed.
      *
-     * @return Whether or not the violating chat message has been fixed.
+     * @return Whether the violating chat message has been fixed.
      */
     public boolean isFixed() {
         return this.fixed;
     }
 
     /**
-     * Sets whether or not the violating chat message should be fixed.
+     * Sets Whether the violating chat message should be fixed.
      *
-     * @param fixed Whether or not the violating chat message should be fixed.
+     * @param fixed Whether the violating chat message should be fixed.
      */
     public void setFixed(boolean fixed) {
         this.fixed = fixed;

@@ -1,22 +1,22 @@
 package tc.oc.chatmoderator.scores;
 
-import java.util.Set;
 
+import com.google.common.base.Preconditions;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.joda.time.Duration;
-import org.joda.time.Instant;
-
-import com.github.rmsy.channels.event.ChannelMessageEvent;
-import com.google.common.base.Preconditions;
 
 import tc.oc.chatmoderator.PlayerManager;
 import tc.oc.chatmoderator.PlayerViolationManager;
 import tc.oc.chatmoderator.events.ScoreUpdateEvent;
 import tc.oc.chatmoderator.events.ViolationAddEvent;
 import tc.oc.chatmoderator.violations.Violation;
+import tc.oc.pgm.util.event.ChannelMessageEvent;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Set;
 
 public class ScoreUpdateListener implements Listener {
 
@@ -51,7 +51,7 @@ public class ScoreUpdateListener implements Listener {
                 score += Math.max(0, violation.getLevel());
             } else {
                 // Add the average of the scores scaled down by time of all violations of this type
-                long secondsSince = new Duration(violation.getTime(), Instant.now()).getStandardSeconds();
+                long secondsSince = Duration.between(violation.getTime(), Instant.now()).getSeconds();
                 secondsSince = secondsSince == 0 ? 1 : secondsSince;
 
                 int messagesSince = violations.getMessagesSinceLastViolation() > 0 ? 1 : violations.getMessagesSinceLastViolation();

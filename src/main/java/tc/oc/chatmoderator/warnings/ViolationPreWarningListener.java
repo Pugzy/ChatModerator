@@ -35,7 +35,7 @@ public class ViolationPreWarningListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerRecieveViolation(ViolationAddEvent event) {
+    public void onPlayerReceiveViolation(ViolationAddEvent event) {
         Player player = event.getPlayer();
         WarningSendEvent warningEvent = new WarningSendEvent(player, event);
         Bukkit.getServer().getPluginManager().callEvent(warningEvent);

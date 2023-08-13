@@ -25,7 +25,7 @@ public class Zone {
      * Available constructor for a Zone.
      *
      * @param excludedFilters The filters to not run on a zone.
-     * @param enabled Whether or not the zone is enabled.
+     * @param enabled Whether the zone is enabled.
      */
     public Zone(ArrayList<Class<? extends Filter>> excludedFilters, boolean enabled) {
         this.excludedFilters = Preconditions.checkNotNull(excludedFilters, "filters");
@@ -42,7 +42,7 @@ public class Zone {
     }
 
     /**
-     * Gets whether or not this zone is enabled.
+     * Gets Whether this zone is enabled.
      *
      * @return If the zone is enabled.
      */

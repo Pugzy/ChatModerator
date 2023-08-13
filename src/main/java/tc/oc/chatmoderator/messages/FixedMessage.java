@@ -2,10 +2,11 @@ package tc.oc.chatmoderator.messages;
 
 import com.google.common.base.Preconditions;
 
-import org.joda.time.Instant;
+import java.time.Instant;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.Instant;
 
 /**
  * Data class used to represent a potential fixed message.

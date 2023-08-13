@@ -3,8 +3,11 @@ package tc.oc.chatmoderator.filters.core;
 import com.google.common.base.Preconditions;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.joda.time.Duration;
-import org.joda.time.Instant;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+
 import tc.oc.chatmoderator.PlayerManager;
 import tc.oc.chatmoderator.PlayerViolationManager;
 import tc.oc.chatmoderator.filters.Filter;
@@ -56,19 +59,19 @@ public class DuplicateMessageFilter extends Filter {
 
         PlayerViolationManager violationSet = this.getPlayerManager().getViolationSet(player);
 
-        if (violationSet.getLastMessage() == null) {
+        if (violationSet.getLastMessageTime() == null) {
             return message; // Let the overarching filter handle the setting of the new message
         }
 
         Instant now = Instant.now();
         Instant lastMessage = violationSet.getLastMessageTime();
-        Duration difference = new Duration(lastMessage, now);
+        Duration difference = Duration.between(lastMessage, now);
 
         boolean shouldAddViolation = false;
 
-        if (lastMessage.withDurationAdded(this.delay, 1).isAfter(now)) {
+        if (lastMessage.plus(this.delay, ChronoUnit.MILLIS).isAfter(now)) {
             shouldAddViolation = true;
-        } else if (lastMessage.withDurationAdded(this.sameMessageDelay, 1).isAfter(now) && this.isSameMessage(violationSet.getLastMessage(), message)) {
+        } else if (lastMessage.plus(this.sameMessageDelay, ChronoUnit.MILLIS).isAfter(now) && this.isSameMessage(violationSet.getLastMessage(), message)) {
             shouldAddViolation = true;
         }
 
@@ -83,7 +86,7 @@ public class DuplicateMessageFilter extends Filter {
 
     private boolean isSameMessage(FixedMessage lastMessage, FixedMessage currentMessage) {
         if (lastMessage != null && currentMessage != null) {
-            return lastMessage.getOriginal().toLowerCase().equals(currentMessage.getOriginal().toLowerCase());
+            return lastMessage.getOriginal().equalsIgnoreCase(currentMessage.getOriginal());
         } else {
             return false;
         }

@@ -60,7 +60,7 @@ public class WordSet {
      * Gets whether all of the words in the set have been checked.
      * If this is called and returns {@code true}, it is likely OK to move onto the next filter.
      *
-     * @return Whether or not all of the words are checked.
+     * @return Whether all of the words are checked.
      */
     public boolean areAllChecked() {
         for (Word word : this.words) {
